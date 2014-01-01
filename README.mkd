@@ -1,3 +1,35 @@
 # GitHub Stars
 
 Manage your github starred project like a boss.
+
+
+## Installation
+
+This Grease Monkey script can be used in both Firefox and Chrome / Chromium.
+
+Firefox user can enable this script via [greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) addons.
+
+Chrome / Chromium user can enable this script via [tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en)
+
+
+## Usage
+
+### Repository
+
+When you star a repository you can add extra comments for this repository, which may help you recall it after some days.
+
+
+Also, you can update your comments in repository's page.
+
+
+### Search by comments
+
+In [stars page](https://github.com/stars)'s search box, you can filter your starred repositories by some words.
+
+
+## TODO
+
+[ ] demo
+[ ] clear TODO tag in the code
+[ ] chrome extension (via [gm2chrome](https://github.com/bcho/gm2chrome))
+[ ] comments persistent (using localStorage currently)
