@@ -1,6 +1,6 @@
 # GitHub Stars
 
-Manage your github starred project like a boss.
+Manage your github starred projects like a boss.
 
 
 ## Installation
