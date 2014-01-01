@@ -50,7 +50,7 @@
 
 
     // Components Setup
-    // -----------------
+    // ----------------
 
     var addComments = function (projectName) {
         $.facebox(ADD_COMMENTS_BOX);
@@ -81,9 +81,8 @@
     };
 
     var starsPage = function () {
-        // bind the :star: buttons
         var starred_repos = document.querySelectorAll('.repo_list li'),
-            curRepo, curRepoName,
+            curRepo, curRepoName, curRepoComments,
             i;
 
         // TODO loops function oops?
@@ -96,9 +95,17 @@
         for (i = 0;i < starred_repos.length;i++) {
             curRepo = starred_repos[i];
             curRepoName = curRepo.querySelector('h3 a').innerText;
+
+            // bind the :star: buttons
             curRepo
                 .querySelector('.unstarred')
                 .addEventListener('click', curried(curRepoName));
+
+            // inject comments
+            curRepoComments = Comments.get(curRepoName);
+            if (curRepoComments) {
+                curRepo.appendChild($('<p>' + curRepoComments + '</p>')[0]);
+            }
         }
     };
 
