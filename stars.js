@@ -18,10 +18,14 @@
     // Local storage keys' prefix.
     var PREFIX = 'gs-';
 
-    // TODO html templating
+    // Templating settings.
+    var TEMPLATE = {
+        interpolate: /<%=([\w ]+)%>/g
+    };
+
     var ADD_COMMENTS_BOX = '' +
         '<h2 class="facebox-header">Add comments</h2>' +
-        '<p><textarea id="add-comments-inp" class="input-block"></textarea></p>' +
+        '<p><textarea id="add-comments-inp" class="input-block"><%= comments %></textarea></p>' +
         '<button type="submit" id="add-comments-btn" class="button button-block">Save</button>' +
         '<button class="facebox-close">' +
             '<span class="octicon octicon-remove-close"></span>' +
@@ -48,12 +52,26 @@
         }
     };
 
+    // a not so fast templating helper
+    var tmpl = function (markup, data) {
+        var pattern = TEMPLATE.interpolate,
+            key;
+
+        while ((key = pattern.exec(markup)) !== null) {
+            markup = markup.replace(key[0], data[key[1].trim()]);
+        }
+
+        return markup;
+    };
+
 
     // Components Setup
     // ----------------
 
     var addComments = function (projectName) {
-        $.facebox(ADD_COMMENTS_BOX);
+        $.facebox(tmpl(ADD_COMMENTS_BOX, {
+            comments: Comments.get(projectName)
+        }));
 
         var addBtn = document.querySelector('#add-comments-btn'),
             commentsInp = document.querySelector('#add-comments-inp');
