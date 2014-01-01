@@ -23,14 +23,27 @@
         interpolate: /<%=([\w ]+)%>/g
     };
 
-    // Add comments box markup
+    // Add comments box markup.
     var ADD_COMMENTS_BOX = '' +
         '<h2 class="facebox-header">Add comments</h2>' +
-        '<p><textarea id="add-comments-inp" class="input-block"><%= comments %></textarea></p>' +
+        '<p><textarea id="add-comments-inp" class="input-block" placeholder="Add some comments">' +
+            '<%= comments %>' +
+        '</textarea></p>' +
         '<button type="submit" id="add-comments-btn" class="button button-block">Save</button>' +
         '<button class="facebox-close">' +
             '<span class="octicon octicon-remove-close"></span>' +
         '</button>';
+
+    // Edit comments button markup.
+    var EDIT_COMMENTS_BTN = '' +
+        '<li>' +
+            '<div>' +
+                '<a href="#" class="minibutton with-count upwards unstarred" title="Edit comments">' +
+                    '<span class="octicon octicon-heart"></span><span class="text">Comments</span>' +
+                '</a>' +
+                '<a class="social-count unstarred">+</a>' +
+            '</div>' +
+        '</li>';
 
     // Comments fuzzy match threshold
     var MATCH_THRESHOLD = 0.4;
@@ -114,8 +127,10 @@
     // ----------------
 
     var addComments = function (projectName) {
+        var originalComments = Comments.get(projectName);
+
         $.facebox(tmpl(ADD_COMMENTS_BOX, {
-            comments: Comments.get(projectName)
+            comments: originalComments
         }));
 
         var addBtn = document.querySelector('#add-comments-btn'),
@@ -124,9 +139,10 @@
         addBtn.addEventListener('click', function () {
             var comments = commentsInp.value;
 
-            if (!comments) return;
+            if (comments != originalComments) {
+                Comments.set(projectName, comments);
+            }
 
-            Comments.set(projectName, comments);
             $(document).trigger('close.facebox');
         });
     };
@@ -145,8 +161,9 @@
 
     var starsPage = function () {
         var starred_repos = document.querySelectorAll('.repo_list li'),
+            starred_repos_count = starred_repos.length,
             repos = [], curRepo,
-            i, ele, name;
+            ele, name;
 
         // TODO loops function oops?
         var curried = function (name) {
@@ -155,7 +172,7 @@
             };
         };
 
-        for (i = 0;i < starred_repos.length;i++) {
+        for (var i = 0;i < starred_repos_count;i++) {
             ele = starred_repos[i];
             name = ele.querySelector('h3 a').innerText;
             curRepo = {
@@ -209,12 +226,21 @@
     };
 
     var projectPage = function (projectName) {
-        // bind the :star: button
+        // inject edit comments box
         document
-            .querySelector('.unstarred')
-            .addEventListener('click', function () {
+            .querySelector('.pagehead-actions')
+            .appendChild($(EDIT_COMMENTS_BTN)[0]);
+
+        // bind the :star: buttons
+        var btn = document.querySelectorAll('.unstarred'),
+            l = btn.length,
+            e;
+        for (var i = 0;i < l;i++) {
+            e = btn[i];
+            e.addEventListener('click', function () {
                 addComments(projectName);
-            });
+            })
+        }
     };
 
 
