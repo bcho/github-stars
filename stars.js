@@ -2,7 +2,7 @@
 // @name        GitHub Stars
 // @namespace   https://github.com/larrydarrelc/github-stars
 // @version     0.0.1
-// @description Manage your github starred projects like a boss
+// @description Manage your github starred projects like a boss.
 //
 // @match       https://github.com/stars*
 // @match       https://github.com/*
@@ -23,6 +23,7 @@
         interpolate: /<%=([\w ]+)%>/g
     };
 
+    // Add comments box markup
     var ADD_COMMENTS_BOX = '' +
         '<h2 class="facebox-header">Add comments</h2>' +
         '<p><textarea id="add-comments-inp" class="input-block"><%= comments %></textarea></p>' +
@@ -30,6 +31,12 @@
         '<button class="facebox-close">' +
             '<span class="octicon octicon-remove-close"></span>' +
         '</button>';
+
+    // Comments fuzzy match threshold
+    var MATCH_THRESHOLD = 0.4;
+
+    // Comments fuzzy match shortest length, used for improving performance
+    var MATCH_LENGTH = 2;
 
 
     // Utilities
@@ -62,6 +69,44 @@
         }
 
         return markup;
+    };
+
+    // Compare two string and get a score for similarity.
+    // Original code from https://github.com/joshaven/string_score
+    // TODO test cases
+    var cmp = function (a, b) {
+        if (a === b) return 1;
+        if (b === "") return 0;
+
+        var runningScore = 0, charScore, finalScore,
+            aString = a.toLowerCase(), aLength = a.length,
+            bString = b.toLowerCase(), bLength = b.length,
+            idxOf, startAt = 0,
+            fuzzies = 1;
+
+        for (var i = 0;i < bLength;i++) {
+            idxOf = aString.indexOf(bString[i], startAt);
+
+            if (idxOf === -1) {
+                return 0;
+            } else if (startAt === idxOf) {
+                charScore = 0.7;
+            } else {
+                charScore = 0.1;
+                if (a[idxOf - 1] === ' ') charScore += 0.8;
+            }
+
+            if (a[idxOf] === b[i]) charScore += 0.1;
+
+            runningScore += charScore;
+            startAt = idxOf + 1;
+        }
+
+        finalScore = 0.5 * (runningScore / aLength + runningScore / bLength) / fuzzies;
+
+        if (aString[0] === bString[0] && finalScore < 0.85) finalScore += 0.15;
+
+        return finalScore;
     };
 
 
@@ -100,8 +145,8 @@
 
     var starsPage = function () {
         var starred_repos = document.querySelectorAll('.repo_list li'),
-            curRepo, curRepoName, curRepoComments,
-            i;
+            repos = [], curRepo,
+            i, ele, name;
 
         // TODO loops function oops?
         var curried = function (name) {
@@ -111,20 +156,56 @@
         };
 
         for (i = 0;i < starred_repos.length;i++) {
-            curRepo = starred_repos[i];
-            curRepoName = curRepo.querySelector('h3 a').innerText;
+            ele = starred_repos[i];
+            name = ele.querySelector('h3 a').innerText;
+            curRepo = {
+                ele: ele,
+                name: name,
+                comments: Comments.get(name)
+            };
+            repos.push(curRepo);
 
             // bind the :star: buttons
-            curRepo
+            curRepo.ele
                 .querySelector('.unstarred')
-                .addEventListener('click', curried(curRepoName));
+                .addEventListener('click', curried(curRepo.name));
 
             // inject comments
-            curRepoComments = Comments.get(curRepoName);
-            if (curRepoComments) {
-                curRepo.appendChild($('<p>' + curRepoComments + '</p>')[0]);
+            if (curRepo.comments) {
+                curRepo.ele.appendChild($('<p>' + curRepo.comments + '</p>')[0]);
             }
         }
+
+        // bind search box
+        var q = document.querySelector('input#star-repo-search');
+        
+        // TODO performance check
+        q.addEventListener('keyup', function () {
+            var needle = q.value;
+
+            if (needle.length === 0) {
+                repos.forEach(function (repo) {
+                    repo.ele.classList.remove('hidden');
+                })
+            }
+
+            if (needle.length < MATCH_LENGTH) return;
+
+            // compare project name and comments
+            var cmpRepo = function (repo) {
+                return ([repo.name, repo.comments].filter(function (a) {
+                    return (cmp(a, needle) >= MATCH_THRESHOLD);
+                }).length > 0);
+            };
+
+            repos.forEach(function (repo) {
+                if (cmpRepo(repo)) {
+                    repo.ele.classList.remove('hidden');
+                } else {
+                    repo.ele.classList.add('hidden');
+                }
+            });
+        });
     };
 
     var projectPage = function (projectName) {
