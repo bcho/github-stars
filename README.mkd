@@ -29,7 +29,12 @@ In [stars page](https://github.com/stars)'s search box, you can filter your star
 
 ## TODO
 
-[ ] demo
-[ ] clear TODO tag in the code
-[ ] chrome extension (via [gm2chrome](https://github.com/bcho/gm2chrome))
-[ ] comments persistent (using localStorage currently)
+* demo
+* clear TODO tag in the code
+* chrome extension (via [gm2chrome](https://github.com/bcho/gm2chrome))
+* comments persistent (using localStorage currently)
+
+
+## Contributing
+
+Contribution is welcome, feel free to open issue and fork. Waiting for your pull request. <3
