@@ -7,9 +7,16 @@ Manage your github starred projects like a boss.
 
 This Grease Monkey script can be used in both Firefox and Chrome / Chromium.
 
-Firefox user can enable this script via [greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) addons.
+### Firefox Users
 
-Chrome / Chromium user can enable this script via [tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en)
+You can enable this [script](github-stars.js) via [greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) addons.
+
+### Chrome / Chromium Users
+
+You can enable this script via:
+
+1. [tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en)
+1. installing the [extension](github-stars.crx) manually.
 
 
 ## Usage
@@ -31,10 +38,11 @@ In [stars page](https://github.com/stars)'s search box, you can filter your star
 
 * demo
 * clear TODO tag in the code
-* chrome extension (via [gm2chrome](https://github.com/bcho/gm2chrome))
 * comments persistent (using localStorage currently)
 
 
 ## Contributing
 
-Contribution is welcome, feel free to open issue and fork. Waiting for your pull request. <3
+Contribution is welcome, feel free to open an issue and fork. Waiting for your pull request. <3
+
+And ping me up with [larrydarrelc@gmail.com](mailto:larrydarrelc@gmail.com).
