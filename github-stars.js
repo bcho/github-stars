@@ -6,6 +6,7 @@
 //
 // @match       https://github.com/stars*
 // @match       https://github.com/*
+// @require     http://code.jquery.com/jquery-2.0.3.min.js
 // ==/UserScript==
 
 /*global $*/
