@@ -8,6 +8,7 @@ EXT_NAME=github-stars
 
 EXT_SRC=$(realpath ./src)
 EXT_SOURCE=${EXT_SRC}/${EXT_NAME}.js
+EXT_PRE_MANI=${EXT_SRC}/manifest.json
 
 EXT_TMP=`realpath ./tmp`
 
@@ -25,7 +26,8 @@ all: build_crx build_gm clean_tmp
 build_crx: convert_crx pack_crx
 
 convert_crx:
-	${PYTHON_RUNTIME} ${GM_CONVERTER} ${EXT_SOURCE} ${EXT_TMP}
+	${PYTHON_RUNTIME} ${GM_CONVERTER} ${EXT_SOURCE} ${EXT_PRE_MANI} ${EXT_TMP}
+	cp ${EXT_SRC}/*.js ${EXT_TMP}/
 
 pack_crx:
 	if [ -a ${EXT_CRX_BUILD_PEM} ]; \
