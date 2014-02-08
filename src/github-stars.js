@@ -7,6 +7,7 @@
 // @match       https://github.com/stars*
 // @match       https://github.com/*
 // @require     http://code.jquery.com/jquery-2.0.3.min.js
+// @permissions tabs
 // ==/UserScript==
 
 /*global $*/
@@ -18,6 +19,14 @@
 
     // Local storage keys' prefix.
     var PREFIX = 'gs-';
+
+    // Script running environment (gm or crx).
+    var MODE_GM = 0,
+        MODE_CRX = 1,
+        MODE = MODE_CRX;
+    if ($.hasOwnProperty('facebox')) {
+        MODE = MODE_GM;
+    }
 
     // Templating settings.
     var TEMPLATE = {
@@ -123,29 +132,48 @@
         return finalScore;
     };
 
+    // Run code via `chrome.tabs.executeScript`
+    var chromeRunCode = function (snippet, cb) {
+        cb = cb || function () {};
+
+        chrome.runtime.sendMessage({
+            snippet: snippet
+        }, cb);
+    };
+
 
     // Components Setup
     // ----------------
 
     var addComments = function (projectName) {
-        var originalComments = Comments.get(projectName);
+        var originalComments = Comments.get(projectName),
+            boxTmpl = tmpl(ADD_COMMENTS_BOX, { comments: originalComments });
 
-        $.facebox(tmpl(ADD_COMMENTS_BOX, {
-            comments: originalComments
-        }));
+        var bindAddBtn = function() {
+            var addBtn = document.querySelector('#add-comments-btn'),
+                commentsInp = document.querySelector('#add-comments-inp');
 
-        var addBtn = document.querySelector('#add-comments-btn'),
-            commentsInp = document.querySelector('#add-comments-inp');
+            addBtn.addEventListener('click', function () {
+                var comments = commentsInp.value;
 
-        addBtn.addEventListener('click', function () {
-            var comments = commentsInp.value;
+                if (comments != originalComments) {
+                    Comments.set(projectName, comments);
+                }
 
-            if (comments != originalComments) {
-                Comments.set(projectName, comments);
-            }
+                if (MODE === MODE_GM) {
+                    $(document).trigger('close.facebox');
+                } else {
+                    chromeRunCode(tmpl('$(document).trigger("close.facebox");'));
+                }
+            });
+        };
 
-            $(document).trigger('close.facebox');
-        });
+        if (MODE === MODE_GM) {
+            $.facebox(boxTmpl);
+            bindAddBtn();
+        } else {
+            chromeRunCode(tmpl("$.facebox('<%= tmpl %>')", {tmpl: boxTmpl}), bindAddBtn);
+        }
     };
 
 
