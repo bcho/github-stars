@@ -13,7 +13,10 @@ You can enable this [script](github-stars.js) via [greasemonkey](https://addons.
 
 ### Chrome / Chromium Users
 
-You can enable this script via [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en).
+You can enable this script via:
+
+- [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en),
+- or install [it](github-stars.crx) manually.
 
 
 ## Usage
